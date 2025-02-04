@@ -39,9 +39,17 @@ namespace TaskManagement.Controllers
 
             // Récupérer les tâches associées à l'utilisateur authentifié
             var userTasks = await _context.Tasks
-                                          .Where(t => t.UserId.ToString() == "amira")
-                                          .Include(t => t.User)
-                                          .ToListAsync();
+                 .Where(t => t.UserId.ToString() == "amira")
+                 .Select(t => new TaskModel
+                 {
+                     Id = t.Id,
+                     Title = t.Title,
+                     Description = t.Description,
+                     DueDate = t.DueDate,
+                     IsCompleted = t.IsCompleted,
+                     UserId = t.UserId
+                 })
+                .ToListAsync();
 
             return Ok(userTasks);
         }
