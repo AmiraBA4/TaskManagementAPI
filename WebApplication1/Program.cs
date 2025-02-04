@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 using TaskManagement.Data;
 using TaskManagement.Services;
@@ -9,14 +11,14 @@ using TaskManagement.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap[JwtRegisteredClaimNames.Sub] = ClaimTypes.Upn;
+
 // Configuration de la base de données In-Memory
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseInMemoryDatabase("TaskManagementDB"));
 
-
-// Add services to the container.
+// Ajouter les services au conteneur
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -68,6 +70,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -75,7 +78,7 @@ using (var scope = app.Services.CreateScope())
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     dbContext.Database.EnsureCreated();
 }
-// Configure the HTTP request pipeline.
+// Configuration du pipeline de requêtes HTTP
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

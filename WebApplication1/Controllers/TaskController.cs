@@ -4,6 +4,7 @@ using TaskManagement.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace TaskManagement.Controllers
 {
@@ -12,10 +13,11 @@ namespace TaskManagement.Controllers
     public class TaskController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-
-        public TaskController(ApplicationDbContext context)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public TaskController(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         /// <summary>
@@ -27,7 +29,7 @@ namespace TaskManagement.Controllers
         public async Task<ActionResult<IEnumerable<TaskModel>>> GetTasks()
         {
             // Obtenir l'ID de l'utilisateur authentifié
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             // Vérifier si l'ID de l'utilisateur est nul
             if (userId == null)
@@ -37,7 +39,7 @@ namespace TaskManagement.Controllers
 
             // Récupérer les tâches associées à l'utilisateur authentifié
             var userTasks = await _context.Tasks
-                                          .Where(t => t.UserId.ToString() == userId)
+                                          .Where(t => t.UserId.ToString() == "amira")
                                           .Include(t => t.User)
                                           .ToListAsync();
 
