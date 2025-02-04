@@ -50,6 +50,7 @@ Dans la fenêtre qui s'ouvre, entrez le token JWT précédemment obtenu dans le 
 3-Cliquez sur "Authorize" puis sur "Close" pour fermer la fenêtre.
 
 4-Tester les endpoints sécurisés :
+![swagger](https://github.com/user-attachments/assets/1b42605d-bc7f-4c3a-8354-25c18b275303)
 
 Sélectionnez un endpoint sécurisé dans l'interface Swagger.
 
